@@ -20,16 +20,6 @@ class OperationsFactoryTest extends TestCase
     {
         $schema = $this->createSchema();
 
-//        $targetResources = [
-//            ['_type' => 'pages', 'uid' => 1, 'title' => 'Test Target'],
-//            ['_type' => 'tt_content', 'pid' => 1, 'uid' => 2, 'title' => 'Test Content'],
-//        ];
-//
-//        $currentResources = [
-//            ['_type' => 'pages', 'uid' => 1, 'title' => 'Test Current'],
-//            ['_type' => 'tt_content', 'pid' => 1, 'uid' => 2, 'title' => 'Current Content'],
-//        ];
-
         $operationsFactory = new OperationsFactory();
         $operationsResult = $operationsFactory->buildFromSchemaAndResources($schema, $targetResources, $currentResources);
         $this->assertJsonStringEqualsJsonString(
@@ -82,24 +72,6 @@ class OperationsFactoryTest extends TestCase
         ];
     }
 
-//$schema = $this->createSchema();
-//
-//$targetResources = [
-//['_type' => 'pages', 'uid' => 1, 'title' => 'Test Target'],
-//['_type' => 'tt_content', 'pid' => 1, 'uid' => 2, 'title' => 'Test Content'],
-//];
-//
-//$currentResources = [
-//['_type' => 'pages', 'uid' => 1, 'title' => 'Test Current'],
-//['_type' => 'tt_content', 'pid' => 1, 'uid' => 2, 'title' => 'Current Content'],
-//];
-//
-//$operationsFactory = new OperationsFactory();
-//$operations = $operationsFactory->buildFromSchemaAndResources($schema, $targetResources, $currentResources);
-//$this->assertJsonStringEqualsJsonString(
-//'[{"@type":"UpdateResource","resource":{"_type":"pages","uid":1,"title":"Test Current"},"resourceUpdates":{"title":"Test Target"}},{"@type":"UpdateResource","resource":{"_type":"tt_content","pid":1,"uid":2,"title":"Current Content"},"resourceUpdates":{"title":"Test Content"}}]',
-//json_encode($operations)
-//);
 
     protected function createSchema()
     {
