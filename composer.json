@@ -2,7 +2,7 @@
     "name": "dfau/convergence",
     "description": "Compares object graphs and decuces necessary operations to convergence both.",
     "type": "library",
-    "license": "GPLv3",
+    "license": "GPL-3.0-or-later",
     "require": {
         "php": ">=7.2 <7.3",
         "ext-json": "*",
