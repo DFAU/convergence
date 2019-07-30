@@ -30,7 +30,7 @@ class ExpressionQualifier implements Qualifier
         return (bool)$this->expressionLanguage->evaluate(
             $this->expression,
             [
-                'resource' => (object)$resource, // Casting to object here, so we can work with properties inside expressions
+                'resource' => $resource,
                 'key' => $key
             ]
         );

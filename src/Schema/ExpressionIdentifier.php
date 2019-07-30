@@ -29,7 +29,7 @@ class ExpressionIdentifier implements Identifier
         return (string)$this->expressionLanguage->evaluate(
             $this->expression,
             [
-                'resource' => (object)$resource, // Casting to object here, so we can work with properties inside expressions
+                'resource' => $resource,
                 'key' => $key
             ]
         );

@@ -5,6 +5,7 @@ namespace DFAU\Convergence;
 
 
 use DFAU\Convergence\Schema\IntraGraphResourceRelation;
+use DFAU\Convergence\Schema\ResourcePropertiesExtractor;
 
 class ResourceMap
 {
@@ -65,13 +66,20 @@ class ResourceMap
             $toBeResource = &$toBeResourceMap->resourceMap[$identifier];
             $asIsResource = &$this->resourceMap[$identifier];
 
+            if ($propertiesExtractor = $this->findSuitablePropertiesExtractor(array_merge($toBeResource, $asIsResource), $identifier)) {
+                $toBeResourceProperties = $propertiesExtractor->getPropertiesFromResource($toBeResource);
+                $asIsResourceProperties = $propertiesExtractor->getPropertiesFromResource($asIsResource);
+            } else {
+                $toBeResourceProperties = $asIsResourceProperties = [];
+            }
+
             [ $propertyNamesToAdd, $propertyNamesToRemove, $propertyNamesToUpdate ] = $this->compareLists(
-                array_keys($toBeResource),
-                array_keys($asIsResource)
+                array_keys($toBeResourceProperties),
+                array_keys($asIsResourceProperties)
             );
 
-            $propertiesToAdd = array_combine($propertyNamesToAdd, array_map(function($propertyName) use ($toBeResource) {
-                return $toBeResource[$propertyName];
+            $propertiesToAdd = array_combine($propertyNamesToAdd, array_map(function($propertyName) use ($toBeResourceProperties) {
+                return $toBeResourceProperties[$propertyName];
             }, $propertyNamesToAdd));
 
             $propertiesToRemove = array_fill_keys($propertyNamesToRemove, null);
@@ -94,12 +102,11 @@ class ResourceMap
             }
 
             foreach ($propertyNamesToUpdate as $propertyName) {
-                if (isset($propertiesToUpdate[$propertyName]) || $toBeResource[$propertyName] == $asIsResource[$propertyName]) {
+                if (isset($propertiesToUpdate[$propertyName]) || $toBeResourceProperties[$propertyName] == $asIsResourceProperties[$propertyName]) {
                     continue;
                 }
-                $propertiesToUpdate[$propertyName] = $toBeResource[$propertyName];
+                $propertiesToUpdate[$propertyName] = $toBeResourceProperties[$propertyName];
             }
-
 
             return [
                 static::COMPARISON_PROPERTIES_TO_ADD => $propertiesToAdd,
@@ -133,12 +140,23 @@ class ResourceMap
         }, $intraGraphRelation->getReferencesFromResource($resource)));
     }
 
+    protected function findSuitablePropertiesExtractor(array $resource, string $identifier): ?ResourcePropertiesExtractor
+    {
+        /** @var ResourcePropertiesExtractor $propertiesExtractor */
+        foreach ($this->schema->getResourcePropertiesExtractors() as $propertiesExtractor) {
+            if ($propertiesExtractor->isSubjectQualified($resource, $identifier)) {
+                return $propertiesExtractor;
+            }
+        }
+        return null;
+    }
+
 
     static public function fromSchemaAndResources(Schema $schema, string $resourceSide, array $resources): self
     {
         if (!in_array($resourceSide, [static::RESOURCE_SIDE_AS_IS, static::RESOURCE_SIDE_TO_BE])) {
             throw new \InvalidArgumentException(
-                'Resource side must be either ::RESOURCE_SIDE_AS_IS or :: RESOURCE_SIDE_TO_BE. "' . $resourceSide . '" has been given instead.',
+                'Resource side must be either ::RESOURCE_SIDE_AS_IS or ::RESOURCE_SIDE_TO_BE. "' . $resourceSide . '" has been given instead.',
                 1562588992
             );
         }

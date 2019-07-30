@@ -6,6 +6,7 @@ namespace DFAU\Convergence;
 
 use DFAU\Convergence\Schema\InterGraphResourceRelation;
 use DFAU\Convergence\Schema\IntraGraphResourceRelation;
+use DFAU\Convergence\Schema\ResourcePropertiesExtractor;
 
 class Schema
 {
@@ -22,8 +23,14 @@ class Schema
      */
     protected $intraGraphReferenceResourceRelations;
 
-    public function __construct(array $interGraphRelations, array $intraGraphReferenceResourceRelations = [])
+    /**
+     * @var \SplObjectStorage<ResourcePropertiesExtractor>
+     */
+    protected $resourcePropertiesExtractors;
+
+    public function __construct(array $interGraphRelations, array $intraGraphReferenceResourceRelations = [], array $resourcePropertiesExtractors = [])
     {
+
         $this->interGraphRelations = new \SplObjectStorage();
         foreach ($interGraphRelations as $interGraphRelation) {
             if (!$interGraphRelation instanceof InterGraphResourceRelation) {
@@ -45,6 +52,18 @@ class Schema
             }
             $this->intraGraphReferenceResourceRelations->attach($intraGraphReferenceResourceRelation);
         }
+
+        $this->resourcePropertiesExtractors = new \SplObjectStorage();
+        foreach ($resourcePropertiesExtractors as $resourcePropertiesExtractor) {
+            if (!$resourcePropertiesExtractor instanceof ResourcePropertiesExtractor) {
+                throw new \InvalidArgumentException(
+                    'Argument $resourcePropertiesExtractors does not contain only objects of type ' . ResourcePropertiesExtractor::class . '. ' . gettype($resourcePropertiesExtractor) . ' is given instead.',
+                    1564482567
+                );
+            }
+            $this->resourcePropertiesExtractors->attach($resourcePropertiesExtractor);
+        }
+
     }
 
     /**
@@ -62,4 +81,14 @@ class Schema
     {
         return $this->intraGraphReferenceResourceRelations;
     }
+
+    /**
+     * @return \SplObjectStorage<ResourcePropertiesExtractor>
+     */
+    public function getResourcePropertiesExtractors(): \SplObjectStorage
+    {
+        return $this->resourcePropertiesExtractors;
+    }
+
+
 }
