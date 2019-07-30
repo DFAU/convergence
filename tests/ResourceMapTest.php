@@ -79,7 +79,7 @@ class ResourceMapTest extends TestCase
     protected function createSchema()
     {
         return new Schema(
-            [new InterGraphResourceRelation(new ExpressionIdentifier('resource.uid'))]
+            [new InterGraphResourceRelation(new ExpressionIdentifier('resource["uid"]'))]
         );
     }
 

@@ -17,6 +17,11 @@ class UpdateResource extends AbstractResourceOperation
         $this->resourceUpdates = $resourceUpdates;
     }
 
+    public function getResourceUpdates(): array
+    {
+        return $this->resourceUpdates;
+    }
+
     public function jsonSerialize()
     {
         return array_merge(parent::jsonSerialize(), [
