@@ -36,4 +36,11 @@ class PropertyPathPropertyList implements PropertyList
         // Casting to object here, so we can work with properties inside expressions
         return (array)$this->propertyAccessor->getValue((object) ['resource' => $resource], $this->propertyPath);
     }
+
+    public function applyPropertiesToResource(array $properties, array $resource): array
+    {
+        $object = (object) ['resource' => $resource];
+        $this->propertyAccessor->setValue($object, $this->propertyPath, $properties);
+        return $object->resource;
+    }
 }

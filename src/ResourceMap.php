@@ -86,6 +86,19 @@ class ResourceMap
 
             $propertiesToUpdate = [];
 
+            foreach ($propertyNamesToUpdate as $propertyName) {
+                if (isset($propertiesToUpdate[$propertyName]) || $toBeResourceProperties[$propertyName] == $asIsResourceProperties[$propertyName]) {
+                    continue;
+                }
+                $propertiesToUpdate[$propertyName] = $toBeResourceProperties[$propertyName];
+            }
+
+            if ($propertiesExtractor) {
+                $propertiesToAdd = $propertiesToAdd ? $propertiesExtractor->applyPropertiesToResource($propertiesToAdd, []) : $propertiesToAdd;
+                $propertiesToRemove = $propertiesToRemove ? $propertiesExtractor->applyPropertiesToResource($propertiesToRemove, []) : $propertiesToRemove;
+                $propertiesToUpdate = $propertiesToUpdate ? $propertiesExtractor->applyPropertiesToResource($propertiesToUpdate, []) : $propertiesToUpdate;
+            }
+
             /** @var IntraGraphResourceRelation $intraGraphRelation */
             foreach ($this->relationMap as $intraGraphRelation) {
                 if (!$intraGraphRelation->isSubjectQualified(array_merge($toBeResource, $asIsResource), $identifier)) {
@@ -99,13 +112,6 @@ class ResourceMap
                     // TODO check whether it's right to provide the match identifiers here
                     $propertiesToUpdate = $intraGraphRelation->applyReferencesToResource($toBeRelations, $propertiesToUpdate);
                 }
-            }
-
-            foreach ($propertyNamesToUpdate as $propertyName) {
-                if (isset($propertiesToUpdate[$propertyName]) || $toBeResourceProperties[$propertyName] == $asIsResourceProperties[$propertyName]) {
-                    continue;
-                }
-                $propertiesToUpdate[$propertyName] = $toBeResourceProperties[$propertyName];
             }
 
             return [

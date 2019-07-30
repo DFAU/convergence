@@ -45,4 +45,9 @@ final class ResourcePropertiesExtractor
         return $this->propertyList->getPropertiesFromResource($resource);
     }
 
+    public function applyPropertiesToResource(array $properties, array $resource) : array
+    {
+        return $this->propertyList->applyPropertiesToResource($properties, $resource);
+    }
+
 }

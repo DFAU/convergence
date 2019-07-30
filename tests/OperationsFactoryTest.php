@@ -91,19 +91,19 @@ class OperationsFactoryTest extends TestCase
                 $jsonApiSchema,
                 [['type' => 'pages', 'id' => 1, 'attributes' => ['title' => 'Test To Be', 'unchanged' => true]]],
                 [['type' => 'pages', 'id' => 1, 'attributes' => ['title' => 'Test As Is', 'unchanged' => true]]],
-                '[{"@type":"UpdateResource","resource":{"type":"pages","id":1,"attributes":{"title":"Test As Is","unchanged":true}},"resourceUpdates":{"title":"Test To Be"}}]'
+                '[{"@type":"UpdateResource","resource":{"type":"pages","id":1,"attributes":{"title":"Test As Is","unchanged":true}},"resourceUpdates":{"attributes":{"title":"Test To Be"}}}]'
             ],
             'jsonApiPropertyAddition' => [
                 $jsonApiSchema,
                 [['type' => 'pages', 'id' => 1, 'attributes' => ['title' => 'Test As Is', 'bodytext' => 'Foo Bar']]],
                 [['type' => 'pages', 'id' => 1, 'attributes' => ['title' => 'Test As Is']]],
-                '[{"@type":"UpdateResource","resource":{"type":"pages","id":1,"attributes":{"title":"Test As Is"}},"resourceUpdates":{"bodytext":"Foo Bar"}}]'
+                '[{"@type":"UpdateResource","resource":{"type":"pages","id":1,"attributes":{"title":"Test As Is"}},"resourceUpdates":{"attributes":{"bodytext":"Foo Bar"}}}]'
             ],
             'jsonApiPropertyRemoval' => [
                 $jsonApiSchema,
                 [['type' => 'pages', 'id' => 1, 'attributes' => ['title' => 'Test As Is']]],
                 [['type' => 'pages', 'id' => 1, 'attributes' => ['title' => 'Test As Is', 'bodytext' => 'Foo Bar']]],
-                '[{"@type":"UpdateResource","resource":{"type":"pages","id":1,"attributes":{"title":"Test As Is","bodytext":"Foo Bar"}},"resourceUpdates":{"bodytext":null}}]'
+                '[{"@type":"UpdateResource","resource":{"type":"pages","id":1,"attributes":{"title":"Test As Is","bodytext":"Foo Bar"}},"resourceUpdates":{"attributes":{"bodytext":null}}}]'
             ],
             'jsonApiRelationAddition' => [
                 $jsonApiSchema,
