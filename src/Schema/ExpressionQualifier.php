@@ -6,7 +6,7 @@ namespace DFAU\Convergence\Schema;
 
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
-class ExpressionQualifier implements Qualifier
+class ExpressionQualifier implements ResourceQualifier, PropertyQualifier
 {
 
     /**
@@ -31,6 +31,17 @@ class ExpressionQualifier implements Qualifier
             $this->expression,
             [
                 'resource' => $resource,
+                'key' => $key
+            ]
+        );
+    }
+
+    public function propertyIsQualified($value, string $key) : bool
+    {
+        return (bool)$this->expressionLanguage->evaluate(
+            $this->expression,
+            [
+                'value' => $value,
                 'key' => $key
             ]
         );

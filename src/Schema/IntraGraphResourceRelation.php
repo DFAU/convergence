@@ -8,7 +8,7 @@ final class IntraGraphResourceRelation implements ResourceRelation
 {
 
     /**
-     * @var Qualifier
+     * @var ResourceQualifier
      */
     protected $subjectQualifier;
 
@@ -28,7 +28,7 @@ final class IntraGraphResourceRelation implements ResourceRelation
     protected $toBeResourceIdentifier;
 
     public function __construct(
-        Qualifier $subjectQualifier,
+        ResourceQualifier $subjectQualifier,
         ReferenceList $referenceList,
         Identifier $asIsResourceIdentifier,
         ?Identifier $toBeResourceIdentifier = null)

@@ -4,7 +4,7 @@
 namespace DFAU\Convergence\Schema;
 
 
-interface Qualifier
+interface ResourceQualifier
 {
 
     public function resourceIsQualified(array $resource, string $key) : bool;

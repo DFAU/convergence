@@ -8,7 +8,7 @@ final class ResourcePropertiesExtractor
 {
 
     /**
-     * @var Qualifier
+     * @var ResourceQualifier
      */
     protected $subjectQualifier;
 
@@ -16,6 +16,11 @@ final class ResourcePropertiesExtractor
      * @var PropertyList
      */
     protected $propertyList;
+
+    /**
+     * @var ResourceQualifier
+     */
+    protected $propertyQualifier;
 
     /**
      * @var Identifier
@@ -28,11 +33,14 @@ final class ResourcePropertiesExtractor
     protected $toBeResourceIdentifier;
 
     public function __construct(
-        Qualifier $subjectQualifier,
-        PropertyList $propertyList)
+        ResourceQualifier $subjectQualifier,
+        PropertyList $propertyList,
+        PropertyQualifier $propertyQualifier = null
+    )
     {
         $this->subjectQualifier = $subjectQualifier;
         $this->propertyList = $propertyList;
+        $this->propertyQualifier = $propertyQualifier;
     }
 
     public function isSubjectQualified(array $resource, string $key) : bool
@@ -42,7 +50,13 @@ final class ResourcePropertiesExtractor
 
     public function getPropertiesFromResource(array $resource): array
     {
-        return $this->propertyList->getPropertiesFromResource($resource);
+        $properties = $this->propertyList->getPropertiesFromResource($resource);
+
+        if ($this->propertyQualifier !== null) {
+            $properties = array_filter($properties, [$this->propertyQualifier, 'propertyIsQualified'], ARRAY_FILTER_USE_BOTH);
+        }
+
+        return $properties;
     }
 
     public function applyPropertiesToResource(array $properties, array $resource) : array
