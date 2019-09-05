@@ -33,16 +33,26 @@ class StringPropertyPathReferenceList implements ReferenceList
         $this->propertyPath = $propertyPath;
         $this->listDelimiter = $listDelimiter;
     }
-
-    public function getReferencesFromResource(array $resource): array
+    public function getAvailablePredicates(array $resource): array
     {
+        return [self::DEFAULT_REFERENCE_PREDICATE];
+    }
+
+    public function getReferencesFromResource(array $resource, string $predicate = self::DEFAULT_REFERENCE_PREDICATE): array
+    {
+        if ($predicate !== self::DEFAULT_REFERENCE_PREDICATE) {
+            return [];
+        }
         $referenceList = $this->propertyAccessor->getValue((object) ['resource' => $resource], $this->propertyPath);
         $references = explode($this->listDelimiter, (string)$referenceList);
         return array_map('trim', $references);
     }
 
-    public function applyReferencesToResource(array $references, array $resource) : array
+    public function applyReferencesToResource(array $relationResources, array $references, array $resource, string $predicate = self::DEFAULT_REFERENCE_PREDICATE) : array
     {
+        if ($predicate !== self::DEFAULT_REFERENCE_PREDICATE) {
+            return $resource;
+        }
         $object = (object) ['resource' => $resource];
         $referenceList = implode($this->listDelimiter, $references);
         $this->propertyAccessor->setValue($object, $this->propertyPath, $referenceList);

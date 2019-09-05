@@ -6,7 +6,7 @@ namespace DFAU\Convergence\Schema;
 
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
-class ExpressionQualifier implements ResourceQualifier, PropertyQualifier
+class ExpressionQualifier implements ResourceQualifier, PropertyQualifier, OrderedRelationQualifier
 {
 
     /**
@@ -43,6 +43,17 @@ class ExpressionQualifier implements ResourceQualifier, PropertyQualifier
             [
                 'value' => $value,
                 'key' => $key
+            ]
+        );
+    }
+
+    public function resourceRelationIsOrdered(array $resource, string $predicate): bool
+    {
+        return (bool)$this->expressionLanguage->evaluate(
+            $this->expression,
+            [
+                'resource' => $resource,
+                'predicate' => $predicate
             ]
         );
     }

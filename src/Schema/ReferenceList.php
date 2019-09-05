@@ -6,8 +6,11 @@ namespace DFAU\Convergence\Schema;
 
 interface ReferenceList
 {
+    const DEFAULT_REFERENCE_PREDICATE = '__DEFAULT__';
 
-    public function getReferencesFromResource(array $resource): array;
+    public function getAvailablePredicates(array $resource): array;
 
-    public function applyReferencesToResource(array $references, array $resource) : array;
+    public function getReferencesFromResource(array $resource, string $predicate = self::DEFAULT_REFERENCE_PREDICATE): array;
+
+    public function applyReferencesToResource(array $relationResources, array $references, array $resource, string $predicate = self::DEFAULT_REFERENCE_PREDICATE) : array;
 }

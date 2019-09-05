@@ -27,16 +27,24 @@ final class IntraGraphResourceRelation implements ResourceRelation
      */
     protected $toBeResourceIdentifier;
 
+    /**
+     * @var OrderedRelationQualifier
+     */
+    protected $orderedRelationQualifier;
+
     public function __construct(
         ResourceQualifier $subjectQualifier,
         ReferenceList $referenceList,
         Identifier $asIsResourceIdentifier,
-        ?Identifier $toBeResourceIdentifier = null)
+        ?Identifier $toBeResourceIdentifier = null,
+        ?OrderedRelationQualifier $orderedRelationQualifier = null
+    )
     {
         $this->subjectQualifier = $subjectQualifier;
         $this->referenceList = $referenceList;
         $this->asIsResourceIdentifier = $asIsResourceIdentifier;
         $this->toBeResourceIdentifier = $toBeResourceIdentifier ?? $asIsResourceIdentifier;
+        $this->orderedRelationQualifier = $orderedRelationQualifier;
     }
 
     public function isSubjectQualified(array $resource, string $key) : bool
@@ -44,14 +52,19 @@ final class IntraGraphResourceRelation implements ResourceRelation
         return $this->subjectQualifier->resourceIsQualified($resource, $key);
     }
 
-    public function getReferencesFromResource(array $resource) : array
+    public function getAvailableReferencePredicates(array $resource) : array
     {
-        return $this->referenceList->getReferencesFromResource($resource);
+        return $this->referenceList->getAvailablePredicates($resource);
     }
 
-    public function applyReferencesToResource(array $references, array $resource) : array
+    public function getReferencesFromResource(array $resource, string $predicate = ReferenceList::DEFAULT_REFERENCE_PREDICATE) : array
     {
-        return $this->referenceList->applyReferencesToResource($references, $resource);
+        return $this->referenceList->getReferencesFromResource($resource, $predicate);
+    }
+
+    public function applyReferencesToResource(array $relationResources, array $references, array $resource, string $predicate = ReferenceList::DEFAULT_REFERENCE_PREDICATE) : array
+    {
+        return $this->referenceList->applyReferencesToResource($relationResources, $references, $resource, $predicate);
     }
 
     public function determineAsIsResourceIdentifier(array $resource, string $key): string
@@ -59,9 +72,16 @@ final class IntraGraphResourceRelation implements ResourceRelation
         return $this->asIsResourceIdentifier->determineIdentity($resource, $key);
     }
 
-
     public function determineToBeResourceIdentifier(array $resource, string $key): string
     {
         return $this->toBeResourceIdentifier->determineIdentity($resource, $key);
+    }
+
+    public function isResourceRelationOrdered(array $resource, string $predicate): bool
+    {
+        if ($this->orderedRelationQualifier) {
+            return $this->orderedRelationQualifier->resourceRelationIsOrdered($resource, $predicate);
+        }
+        return true;
     }
 }

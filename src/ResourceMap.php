@@ -101,16 +101,27 @@ class ResourceMap
 
             /** @var IntraGraphResourceRelation $intraGraphRelation */
             foreach ($this->relationMap as $intraGraphRelation) {
-                if (!$intraGraphRelation->isSubjectQualified(array_merge($toBeResource, $asIsResource), $identifier)) {
+                $mergedResource = array_merge($toBeResource, $asIsResource);
+                if (!$intraGraphRelation->isSubjectQualified($mergedResource, $identifier)) {
                     continue;
                 }
 
-                $toBeRelations = $this->resolveRelationIdentifiers($toBeResourceMap, $intraGraphRelation, $toBeResource);
-                $asIsRelations = $this->resolveRelationIdentifiers($this, $intraGraphRelation, $asIsResource);
+                foreach ($intraGraphRelation->getAvailableReferencePredicates($mergedResource) as $predicate) {
+                    $toBeRelationMaps = $this->resolveRelationIdentifiers($toBeResourceMap, $intraGraphRelation, $toBeResource, $predicate);
+                    $asIsRelationMaps = $this->resolveRelationIdentifiers($this, $intraGraphRelation, $asIsResource, $predicate);
 
-                if (array_diff_assoc($toBeRelations, $asIsRelations) || array_diff_assoc($asIsRelations, $toBeRelations)) {
-                    // TODO check whether it's right to provide the match identifiers here
-                    $propertiesToUpdate = $intraGraphRelation->applyReferencesToResource($toBeRelations, $propertiesToUpdate);
+                    $toBeRelations = array_values(array_filter($toBeRelationMaps));
+                    $asIsRelations = array_values(array_filter($asIsRelationMaps));
+
+                    $comparisonFunction = $intraGraphRelation->isResourceRelationOrdered($mergedResource, $predicate) ? 'array_diff_assoc' : 'array_diff';
+
+                    if ($comparisonFunction($toBeRelations, $asIsRelations) || $comparisonFunction($asIsRelations, $toBeRelations)) {
+                        // TODO check whether it's right to provide the match identifiers here
+                        $toBeRelationResources = array_combine($toBeRelations, array_map(function($resourceIdentifier) use($toBeResourceMap) {
+                            return $toBeResourceMap->resourceMap[$resourceIdentifier];
+                        }, $toBeRelations));
+                        $propertiesToUpdate = $intraGraphRelation->applyReferencesToResource($toBeRelationResources, $toBeRelationMaps, $propertiesToUpdate, $predicate);
+                    }
                 }
             }
 
@@ -139,11 +150,12 @@ class ResourceMap
         return [$entriesToAdd, $entriesToRemove, $commonEntries];
     }
 
-    protected function resolveRelationIdentifiers(ResourceMap $resourceMap, IntraGraphResourceRelation $intraGraphRelation, $resource): array
+    protected function resolveRelationIdentifiers(ResourceMap $resourceMap, IntraGraphResourceRelation $intraGraphRelation, $resource, string $predicate): array
     {
-        return array_filter(array_map(function ($reference) use ($resourceMap, $intraGraphRelation) {
+        $references = $intraGraphRelation->getReferencesFromResource($resource, $predicate);
+        return array_combine($references, array_map(function ($reference) use ($resourceMap, $intraGraphRelation) {
             return $resourceMap->relationMap[$intraGraphRelation][$reference] ?? null;
-        }, $intraGraphRelation->getReferencesFromResource($resource)));
+        }, $references));
     }
 
     protected function findSuitablePropertiesExtractor(array $resource, string $identifier): ?ResourcePropertiesExtractor
