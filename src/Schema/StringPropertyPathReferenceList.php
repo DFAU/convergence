@@ -4,6 +4,7 @@
 namespace DFAU\Convergence\Schema;
 
 
+use Symfony\Component\PropertyAccess\Exception\NoSuchIndexException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -43,7 +44,9 @@ class StringPropertyPathReferenceList implements ReferenceList
         if ($predicate !== self::DEFAULT_REFERENCE_PREDICATE) {
             return [];
         }
-        $referenceList = $this->propertyAccessor->getValue((object) ['resource' => $resource], $this->propertyPath);
+        try {
+            $referenceList = $this->propertyAccessor->getValue((object) ['resource' => $resource], $this->propertyPath);
+        } catch (NoSuchIndexException $exception) {}
         $references = explode($this->listDelimiter, (string)$referenceList);
         return array_map('trim', $references);
     }
