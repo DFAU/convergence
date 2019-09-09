@@ -101,17 +101,17 @@ class ResourceMap
 
             /** @var IntraGraphResourceRelation $intraGraphRelation */
             foreach ($this->relationMap as $intraGraphRelation) {
-                $mergedResource = array_merge($toBeResource, $asIsResource);
+                $mergedResource = array_merge($asIsResource, $toBeResource);
                 if (!$intraGraphRelation->isSubjectQualified($mergedResource, $identifier)) {
                     continue;
                 }
 
                 foreach ($intraGraphRelation->getAvailableReferencePredicates($mergedResource) as $predicate) {
-                    $toBeRelationMaps = $this->resolveRelationIdentifiers($toBeResourceMap, $intraGraphRelation, $toBeResource, $predicate);
-                    $asIsRelationMaps = $this->resolveRelationIdentifiers($this, $intraGraphRelation, $asIsResource, $predicate);
+                    $toBeRelationsMap = $this->resolveRelationIdentifiers($toBeResourceMap, $intraGraphRelation, $toBeResource, $predicate);
+                    $asIsRelationsMap = $this->resolveRelationIdentifiers($this, $intraGraphRelation, $asIsResource, $predicate);
 
-                    $toBeRelations = array_values(array_filter($toBeRelationMaps));
-                    $asIsRelations = array_values(array_filter($asIsRelationMaps));
+                    $toBeRelations = array_values($toBeRelationsMap);
+                    $asIsRelations = array_values($asIsRelationsMap);
 
                     $comparisonFunction = $intraGraphRelation->isResourceRelationOrdered($mergedResource, $predicate) ? 'array_diff_assoc' : 'array_diff';
 
@@ -120,7 +120,7 @@ class ResourceMap
                         $toBeRelationResources = array_combine($toBeRelations, array_map(function($resourceIdentifier) use($toBeResourceMap) {
                             return $toBeResourceMap->resourceMap[$resourceIdentifier];
                         }, $toBeRelations));
-                        $propertiesToUpdate = $intraGraphRelation->applyReferencesToResource($toBeRelationResources, $toBeRelationMaps, $propertiesToUpdate, $predicate);
+                        $propertiesToUpdate = $intraGraphRelation->applyReferencesToResource($toBeRelationResources, $toBeRelationsMap, $propertiesToUpdate, $predicate);
                     }
                 }
             }
