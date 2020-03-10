@@ -4,7 +4,7 @@
     "type": "library",
     "license": "GPL-3.0-or-later",
     "require": {
-        "php": ">=7.2 <7.3",
+        "php": ">=7.2 <7.5",
         "ext-json": "*",
         "symfony/expression-language": "^4.3.2",
         "symfony/property-access": "^4.3"
