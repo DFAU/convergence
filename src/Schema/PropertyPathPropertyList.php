@@ -27,7 +27,7 @@ class PropertyPathPropertyList implements PropertyList
 
     public function __construct(string $propertyPath)
     {
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()->disableExceptionOnInvalidIndex()->getPropertyAccessor();
         $this->propertyPath = $propertyPath;
     }
 
