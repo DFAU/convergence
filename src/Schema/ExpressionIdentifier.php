@@ -5,6 +5,7 @@ namespace DFAU\Convergence\Schema;
 
 
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use DFAU\Convergence\ExpressionLanguage\DefaultFunctionsProvider;
 
 class ExpressionIdentifier implements Identifier
 {
@@ -21,7 +22,7 @@ class ExpressionIdentifier implements Identifier
     public function __construct(string $expression)
     {
         $this->expression = $expression;
-        $this->expressionLanguage = (new ExpressionLanguage());
+        $this->expressionLanguage = (new ExpressionLanguage(null, [ new DefaultFunctionsProvider() ]));
     }
 
     public function determineIdentity(array $resource, string $key) : string

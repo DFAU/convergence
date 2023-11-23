@@ -30,7 +30,7 @@ class StringPropertyPathReferenceList implements ReferenceList
 
     public function __construct(string $propertyPath, $listDelimiter = self::DELIMITER_COMMA)
     {
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()->disableExceptionOnInvalidIndex()->getPropertyAccessor();
         $this->propertyPath = $propertyPath;
         $this->listDelimiter = $listDelimiter;
     }
