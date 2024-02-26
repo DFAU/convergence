@@ -6,7 +6,7 @@ namespace DFAU\Convergence\Schema;
 
 interface ReferenceList
 {
-    const DEFAULT_REFERENCE_PREDICATE = '__DEFAULT__';
+    public const DEFAULT_REFERENCE_PREDICATE = '__DEFAULT__';
 
     public function getAvailablePredicates(array $resource): array;
 

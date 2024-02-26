@@ -4,6 +4,8 @@
 namespace DFAU\Convergence\Tests;
 
 
+use DFAU\Convergence\Schema\InterGraphResourceRelation;
+use DFAU\Convergence\Schema\ExpressionIdentifier;
 use DFAU\Convergence\Schema;
 use PHPUnit\Framework\TestCase;
 
@@ -24,7 +26,7 @@ class SchemaTest extends TestCase
         $this->expectExceptionCode(1562149887);
 
         new Schema(
-            [new Schema\InterGraphResourceRelation(new Schema\ExpressionIdentifier('resource.uid'))],
+            [new InterGraphResourceRelation(new ExpressionIdentifier('resource.uid'))],
             [new \stdClass()]
         );
     }

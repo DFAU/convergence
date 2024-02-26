@@ -10,21 +10,21 @@ use DFAU\Convergence\Schema\ResourcePropertiesExtractor;
 class ResourceMap
 {
 
-    const RESOURCE_SIDE_AS_IS = 'asIs';
-    const RESOURCE_SIDE_TO_BE = 'toBe';
+    public const RESOURCE_SIDE_AS_IS = 'asIs';
+    public const RESOURCE_SIDE_TO_BE = 'toBe';
 
-    const COMPARISON_RESOURCES_TO_ADD = 'resourcesToAdd';
-    const COMPARISON_RESOURCES_TO_REMOVE = 'resourcesToRemove';
-    const COMPARISON_RESOURCES_TO_UPDATE = 'resourcesToUpdate';
+    public const COMPARISON_RESOURCES_TO_ADD = 'resourcesToAdd';
+    public const COMPARISON_RESOURCES_TO_REMOVE = 'resourcesToRemove';
+    public const COMPARISON_RESOURCES_TO_UPDATE = 'resourcesToUpdate';
 
-    const COMPARISON_PROPERTIES_TO_ADD = 'propertiesToAdd';
-    const COMPARISON_PROPERTIES_TO_REMOVE = 'propertiesToRemove';
-    const COMPARISON_PROPERTIES_TO_UPDATE = 'propertiesToUpdate';
+    public const COMPARISON_PROPERTIES_TO_ADD = 'propertiesToAdd';
+    public const COMPARISON_PROPERTIES_TO_REMOVE = 'propertiesToRemove';
+    public const COMPARISON_PROPERTIES_TO_UPDATE = 'propertiesToUpdate';
 
     /**
      * @var array<string, array>
      */
-    protected $resourceMap;
+    protected $resourceMap = [];
 
     /**
      * @var \SplObjectStorage<IntraGraphResourceRelation>
@@ -39,7 +39,6 @@ class ResourceMap
 
     public function __construct()
     {
-        $this->resourceMap = [];
         $this->relationMap = new \SplObjectStorage();
     }
 
@@ -54,13 +53,9 @@ class ResourceMap
             array_keys($this->resourceMap)
         );
 
-        $resourcesToAdd = array_map(function &($identifier) use ($toBeResourceMap) {
-            return $toBeResourceMap->resourceMap[$identifier];
-        }, $identifierToAdd);
+        $resourcesToAdd = array_map(fn&($identifier) => $toBeResourceMap->resourceMap[$identifier], $identifierToAdd);
 
-        $resourcesToRemove = array_map(function &($identifier) {
-            return $this->resourceMap[$identifier];
-        }, $identifierToRemove);
+        $resourcesToRemove = array_map(fn&($identifier) => $this->resourceMap[$identifier], $identifierToRemove);
 
         $resourcesToUpdate = array_combine($identifierToUpdate, array_map(function ($identifier) use ($toBeResourceMap) {
             $toBeResource = &$toBeResourceMap->resourceMap[$identifier];
@@ -78,9 +73,7 @@ class ResourceMap
                 array_keys($asIsResourceProperties)
             );
 
-            $propertiesToAdd = array_combine($propertyNamesToAdd, array_map(function($propertyName) use ($toBeResourceProperties) {
-                return $toBeResourceProperties[$propertyName];
-            }, $propertyNamesToAdd));
+            $propertiesToAdd = array_combine($propertyNamesToAdd, array_map(fn($propertyName) => $toBeResourceProperties[$propertyName], $propertyNamesToAdd));
 
             $propertiesToRemove = array_fill_keys($propertyNamesToRemove, null);
 
@@ -117,9 +110,7 @@ class ResourceMap
 
                     if ($comparisonFunction($toBeRelations, $asIsRelations) || $comparisonFunction($asIsRelations, $toBeRelations)) {
                         // TODO check whether it's right to provide the match identifiers here
-                        $toBeRelationResources = array_combine($toBeRelations, array_map(function($resourceIdentifier) use($toBeResourceMap) {
-                            return $toBeResourceMap->resourceMap[$resourceIdentifier];
-                        }, $toBeRelations));
+                        $toBeRelationResources = array_combine($toBeRelations, array_map(fn($resourceIdentifier) => $toBeResourceMap->resourceMap[$resourceIdentifier], $toBeRelations));
                         $propertiesToUpdate = $intraGraphRelation->applyReferencesToResource($toBeRelationResources, $toBeRelationsMap, $propertiesToUpdate, $predicate);
                     }
                 }
@@ -153,9 +144,7 @@ class ResourceMap
     protected function resolveRelationIdentifiers(ResourceMap $resourceMap, IntraGraphResourceRelation $intraGraphRelation, $resource, string $predicate): array
     {
         $references = $intraGraphRelation->getReferencesFromResource($resource, $predicate);
-        return array_combine($references, array_map(function ($reference) use ($resourceMap, $intraGraphRelation) {
-            return $resourceMap->relationMap[$intraGraphRelation][$reference] ?? null;
-        }, $references));
+        return array_combine($references, array_map(fn($reference) => $resourceMap->relationMap[$intraGraphRelation][$reference] ?? null, $references));
     }
 
     protected function findSuitablePropertiesExtractor(array $resource, string $identifier): ?ResourcePropertiesExtractor
@@ -248,7 +237,7 @@ class ResourceMap
                 $identifier = $intraGraphRelation->determineToBeResourceIdentifier($resource, $key);
         }
 
-        if (empty($identifier)) {
+        if ($identifier === '' || $identifier === '0') {
             return;
         }
 
