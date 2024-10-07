@@ -26,13 +26,9 @@ class OperationsFactory
 
         $comparisonResults = $asIsResourceMap->compare($toBeResourceMap);
 
-        $operations = array_map(function ($resource) {
-            return new AddResource($resource);
-        }, $comparisonResults[ResourceMap::COMPARISON_RESOURCES_TO_ADD]);
+        $operations = array_map(fn($resource) => new AddResource($resource), $comparisonResults[ResourceMap::COMPARISON_RESOURCES_TO_ADD]);
 
-        $operations = array_merge($operations, array_map(function ($resource) {
-            return new RemoveResource($resource);
-        }, $comparisonResults[ResourceMap::COMPARISON_RESOURCES_TO_REMOVE]));
+        $operations = array_merge($operations, array_map(fn($resource) => new RemoveResource($resource), $comparisonResults[ResourceMap::COMPARISON_RESOURCES_TO_REMOVE]));
 
         foreach ($comparisonResults[ResourceMap::COMPARISON_RESOURCES_TO_UPDATE] as $resourceUpdateComparisonResult) {
             $resourceUpdates = [];
@@ -45,7 +41,7 @@ class OperationsFactory
             if (!empty($resourceUpdateComparisonResult[ResourceMap::COMPARISON_PROPERTIES_TO_UPDATE])) {
                 $resourceUpdates = array_merge($resourceUpdates, $resourceUpdateComparisonResult[ResourceMap::COMPARISON_PROPERTIES_TO_UPDATE]);
             }
-            if (!empty($resourceUpdates)) {
+            if ($resourceUpdates !== []) {
                 $operations[] = new UpdateResource(
                     $resourceUpdateComparisonResult[ResourceMap::RESOURCE_SIDE_AS_IS],
                     $resourceUpdates

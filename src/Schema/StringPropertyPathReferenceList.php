@@ -11,7 +11,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 class StringPropertyPathReferenceList implements ReferenceList
 {
 
-    const DELIMITER_COMMA = ',';
+    public const DELIMITER_COMMA = ',';
 
     /**
      * @var string

@@ -12,7 +12,7 @@ class DefaultFunctionsProvider implements ExpressionFunctionProviderInterface
     /**
      * @return ExpressionFunction[] An array of Function instances
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             $this->getTraverseArrayFunction(),
