@@ -22,7 +22,7 @@ class UpdateResource extends AbstractResourceOperation
         return $this->resourceUpdates;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return array_merge(parent::jsonSerialize(), [
            'resourceUpdates' => $this->resourceUpdates
