@@ -20,7 +20,7 @@ abstract class AbstractResourceOperation implements Operation
         return (new \ReflectionClass($this))->getShortName();
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             '@type' => $this->getType(),
